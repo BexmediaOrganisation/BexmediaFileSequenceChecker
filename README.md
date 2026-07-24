@@ -160,7 +160,7 @@ workflow packages the two scripts plus the guide into
 
 ---
 
-*Made by Bexmedia. Free to use for non-commercial purposes — see
-[LICENSE](LICENSE) (you may use and share it, just not sell it or make money
-from it). No footage or data ever leaves your computer; this tool only reads
-filenames.*
+*Made by Bexmedia. Free to use — including inside a company or on paid client
+work. The only thing you can't do is sell the tool itself or make money from
+it directly. See [LICENSE](LICENSE). No footage or data ever leaves your
+computer; this tool only reads filenames.*

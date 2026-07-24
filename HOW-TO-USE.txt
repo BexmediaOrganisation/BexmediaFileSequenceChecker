@@ -72,5 +72,6 @@ try step 1 again.
   mixed in with your originals).
 
 
-Made by Bexmedia.  Free for non-commercial use - see LICENSE.
-(Use and share it freely; just don't sell it or make money from it.)
+Made by Bexmedia.  Free to use - see LICENSE.
+(Use it all you like, in a company or not. Just don't sell the tool
+itself or make money from it directly.)
