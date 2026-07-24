@@ -122,6 +122,9 @@ number in the sequence, one per row, coloured green (present) or red (missing).
   and its sidecar made it across.
 - **"Show missing only"** button hides every complete row, leaving just the
   rows that have something missing.
+- **"Save as PDF"** button turns the report (whatever's currently shown — so
+  filter first if you like) into a PDF using your browser's built-in "Save as
+  PDF". Nothing to install.
 
 ---
 

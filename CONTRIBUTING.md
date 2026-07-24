@@ -27,8 +27,10 @@ Both scripts implement the **same** behaviour and should be kept in sync:
   in each cell (green present / red missing), and sequences that share a range
   (e.g. an MP4 and its M01.XML sidecar) become **side-by-side columns** so they
   pair up. Rows where every column is present get class `allpresent`; the "Show
-  missing only" button hides those. Columns are sorted by label for a stable
-  order. In the Mac script the HTML is built in bash/awk from `SEQ\t...` lines
+  missing only" button hides those. A "Save as PDF" button calls
+  `window.print()` (an `@media print` block hides the controls, keeps the
+  green/red via `print-color-adjust: exact`, and avoids row/table page breaks).
+  Columns are sorted by label for a stable order. Base font size is 17px. In the Mac script the HTML is built in bash/awk from `SEQ\t...` lines
   the scanning awk emits to stdout (label, min, max, pad, prefix, suffix, ext,
   present-list); keep those lines out of the `.txt`.
 - Scan **every** file type.

@@ -316,25 +316,33 @@ if ($missingReport.Count -gt 0) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Missing Files Report</title>
 <style>
-  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; color: #1c1c1e; background: #fff; }
-  h1 { font-size: 20px; margin: 0 0 4px; }
-  .meta { color: #666; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
-  .controls { position: sticky; top: 0; background: #fff; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 16px; z-index: 5; }
-  button { font-size: 14px; padding: 8px 14px; border: 1px solid #ccc; border-radius: 8px; background: #f6f6f6; cursor: pointer; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 28px; color: #1c1c1e; background: #fff; font-size: 17px; }
+  h1 { font-size: 30px; margin: 0 0 6px; }
+  .meta { color: #666; font-size: 16px; margin-bottom: 20px; line-height: 1.6; }
+  .controls { position: sticky; top: 0; background: #fff; padding: 12px 0; border-bottom: 1px solid #eee; margin-bottom: 20px; z-index: 5; }
+  button { font-size: 17px; padding: 10px 18px; border: 1px solid #ccc; border-radius: 8px; background: #f6f6f6; cursor: pointer; }
   button.active { background: #1c1c1e; color: #fff; border-color: #1c1c1e; }
-  .legend { display: inline-block; margin-left: 12px; font-size: 13px; color: #555; }
-  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin: 0 4px 0 10px; }
+  .legend { display: inline-block; margin-left: 14px; font-size: 16px; color: #555; }
+  .swatch { display: inline-block; width: 15px; height: 15px; border-radius: 3px; vertical-align: middle; margin: 0 5px 0 12px; }
   .swatch.present { background: #e4f7e4; } .swatch.missing { background: #fde3e3; }
-  .grp { margin-bottom: 32px; }
-  .grp .sub { color: #666; font-size: 12px; margin: 0 0 8px; }
-  table { border-collapse: collapse; font-family: Consolas, monospace; font-size: 13px; }
-  th { text-align: left; padding: 6px 10px; border-bottom: 2px solid #ddd; font-size: 13px; white-space: nowrap; }
-  td { padding: 3px 10px; white-space: nowrap; }
+  .grp { margin-bottom: 36px; }
+  .grp .sub { color: #666; font-size: 15px; margin: 0 0 10px; }
+  table { border-collapse: collapse; font-family: Consolas, monospace; font-size: 17px; }
+  th { text-align: left; padding: 8px 14px; border-bottom: 2px solid #ddd; font-size: 17px; white-space: nowrap; }
+  td { padding: 5px 14px; white-space: nowrap; }
   tr.allpresent td { }
   td.present { color: #1a7f1a; }
   td.missing { color: #c62222; font-weight: 700; background: #fde3e3; }
   td.num { color: #999; text-align: right; border-right: 1px solid #eee; }
   body.missing-only tr.allpresent { display: none; }
+  @media print {
+    body { margin: 8mm; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .controls { display: none; }
+    h1 { font-size: 20px; }
+    table { font-size: 12px; }
+    tr, .grp { break-inside: avoid; page-break-inside: avoid; }
+    thead { display: table-header-group; }   /* repeat headers on each page */
+  }
 </style></head><body>
 <h1>Missing files report</h1>
 <div class="meta">
@@ -345,6 +353,7 @@ if ($missingReport.Count -gt 0) {
 <div class="controls">
   <button id="btnAll" class="active" onclick="setFilter(false)">Show all</button>
   <button id="btnMiss" onclick="setFilter(true)">Show missing only</button>
+  <button onclick="window.print()">Save as PDF</button>
   <span class="legend"><span class="swatch present"></span>present<span class="swatch missing"></span>missing</span>
 </div>
 "@)

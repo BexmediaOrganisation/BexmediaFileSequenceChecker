@@ -9,8 +9,9 @@ spotting a lost or un-copied clip before it becomes a problem.
 When it finds gaps you get TWO reports: a plain text list, and a colour
 HTML report you open in a browser. The HTML report lists the full
 filename for every number (green = present, red = missing). Paired files
-(e.g. an MP4 and its matching XML) are shown side by side in two columns,
-and a "Show missing only" button hides everything that's complete.
+(e.g. an MP4 and its matching XML) are shown side by side in two columns.
+A "Show missing only" button hides everything that's complete, and a
+"Save as PDF" button lets you save it as a PDF straight from the browser.
 
 Nothing is installed. Nothing leaves your computer. It only reads the
 filenames in the folder you point it at.
