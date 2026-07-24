@@ -1,0 +1,75 @@
+========================================================
+ BEXMEDIA FILE SEQUENCE CHECKER  -  QUICK START
+========================================================
+
+This tool checks a folder of files (video, images, XML - any type) and
+tells you if any numbers are MISSING from the sequence. It's handy for
+spotting a lost or un-copied clip before it becomes a problem.
+
+Nothing is installed. Nothing leaves your computer. It only reads the
+filenames in the folder you point it at.
+
+
+--------------------------------------------------------
+ WINDOWS
+--------------------------------------------------------
+
+1. Right-click  "Find-SequenceGaps.ps1"  ->  Run with PowerShell.
+
+2. A window opens.
+     - Drag your FOOTAGE folder into the window, press Enter.
+     - It asks if the report can go to your Downloads folder.
+       Press Enter for yes, or type N and drag a different folder in.
+
+3. Read the results. A file called
+     MissingFiles_<date>.txt
+   is saved in the folder you chose.
+
+If you see a red "execution policy" error, open PowerShell and run this
+once, then try again:
+
+     Set-ExecutionPolicy -Scope Process Bypass
+
+
+--------------------------------------------------------
+ MAC
+--------------------------------------------------------
+
+1. The FIRST time only: right-click (or Control-click)
+     "find-sequence-gaps.command"  ->  Open
+   Then click "Open" again on the warning. (Once only.)
+
+2. A Terminal window opens.
+     - Drag your FOOTAGE folder into the window, press Return.
+     - It asks if the report can go to your Downloads folder.
+       Press Return for yes, or type N and drag a different folder in.
+
+3. Read the results. A file called
+     MissingFiles_<date>.txt
+   is saved in the folder you chose.
+
+If it says "permission denied", open Terminal, type:  chmod +x
+(with a space after it), drag the .command file in, press Return, then
+try step 1 again.
+
+
+--------------------------------------------------------
+ GOOD TO KNOW
+--------------------------------------------------------
+
+* It works out which number is the clip/frame number automatically, even
+  when the name also contains a date (e.g. BEXFX30_20260721_5348.MP4 is
+  read as clip 5348).
+
+* Each file type is checked as its own sequence, so your .MP4 files and
+  their .XML sidecars are counted separately and never clash.
+
+* A gap right at the start or end of the range might be normal - the
+  clip may simply have continued onto the next card. Always sanity-check
+  the lowest and highest numbers against your other cards.
+
+* By default it does NOT look inside sub-folders (so a Proxy folder isn't
+  mixed in with your originals).
+
+
+Made by Bexmedia.  Property of Bexmedia - internal use.
