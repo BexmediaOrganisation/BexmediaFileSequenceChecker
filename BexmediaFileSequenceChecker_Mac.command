@@ -70,33 +70,10 @@ if [ ! -d "$SCAN_PATH" ]; then
     exit 1
 fi
 
-# --- Where the report should go (default: next to the scanned folder) -------
-# By default the report is saved right next to the files you checked. You're
-# only asked for a location if you say you want to change it.
+# We check the sequence FIRST. The report is only written (and you're only
+# asked where to save it) if gaps are actually found. By default it saves next
+# to the folder you checked; a second path argument is honoured without asking.
 DEFAULT_OUT="$SCAN_PATH"
-
-if [ -z "$OUT_FOLDER" ]; then
-    echo ""
-    echo "  2) The report will be saved in the folder you checked:"
-    echo "       $DEFAULT_OUT"
-    printf "     Save it somewhere else instead? (Y/N) "
-    read -r ANS
-    case "$ANS" in
-        y|Y|yes|YES)
-            echo ""
-            echo "     Drag the folder where you want the report into this window, then press Return."
-            printf "     Save report to: "
-            read -r OUT_FOLDER
-            OUT_FOLDER="$(strip_quotes "$OUT_FOLDER")"
-            ;;
-    esac
-    [ -z "$OUT_FOLDER" ] && OUT_FOLDER="$DEFAULT_OUT"
-fi
-
-if [ ! -d "$OUT_FOLDER" ]; then
-    echo "  '$OUT_FOLDER' is not a folder - saving report next to the checked folder instead."
-    OUT_FOLDER="$DEFAULT_OUT"
-fi
 
 # --- Build the file list (every file type) ----------------------------------
 if [ $RECURSE -eq 1 ]; then DEPTH=(); else DEPTH=("-maxdepth" "1"); fi
@@ -123,7 +100,6 @@ fi
 # ===========================================================================
 
 STAMP=$(date +%Y%m%d_%H%M%S)
-OUT_FILE="$OUT_FOLDER/MissingFiles_$STAMP.txt"
 
 REPORT=$(printf '%s\n' "$FILES" | awk -v scanpath="$SCAN_PATH" '
 function basenum(s,   n){ n=s+0; return n }   # strip leading zeros for math
@@ -310,6 +286,33 @@ function recon(pfx,num,pad,sfx,ext,   p) {
 GRAND=$(printf '%s\n' "$REPORT" | sed -n 's/^TOTAL //p')
 
 if [ "${GRAND:-0}" -gt 0 ] 2>/dev/null; then
+    # Gaps were found - NOW decide where to save (only prompt if no folder was
+    # passed as an argument).
+    if [ -z "$OUT_FOLDER" ]; then
+        OUT_FOLDER="$DEFAULT_OUT"
+        echo ""
+        echo "  Gaps were found - a report will be saved in the folder you checked:"
+        echo "     $DEFAULT_OUT"
+        printf "     Save it somewhere else instead? (Y/N) "
+        read -r ANS
+        case "$ANS" in
+            y|Y|yes|YES)
+                echo ""
+                echo "     Drag the folder where you want the report into this window, then press Return."
+                printf "     Save report to: "
+                read -r PICKED
+                PICKED="$(strip_quotes "$PICKED")"
+                [ -n "$PICKED" ] && OUT_FOLDER="$PICKED"
+                ;;
+        esac
+    fi
+
+    if [ ! -d "$OUT_FOLDER" ]; then
+        echo "  '$OUT_FOLDER' is not a folder - saving report next to the checked folder instead."
+        OUT_FOLDER="$DEFAULT_OUT"
+    fi
+
+    OUT_FILE="$OUT_FOLDER/MissingFiles_$STAMP.txt"
     {
         echo "Missing files report"
         echo "Scanned : $SCAN_PATH"
@@ -327,7 +330,7 @@ if [ "${GRAND:-0}" -gt 0 ] 2>/dev/null; then
     echo "  Saved full list to: $OUT_FILE"
 else
     echo ""
-    echo "  No gaps found - nothing to export."
+    echo "  All sequences complete - no gaps found. Nothing to save."
 fi
 
 echo ""

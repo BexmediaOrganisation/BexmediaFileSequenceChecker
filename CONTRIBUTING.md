@@ -15,8 +15,10 @@ Internal notes for Bexmedia staff who maintain this tool.
 Both scripts implement the **same** behaviour and should be kept in sync:
 
 - Ask for a folder to scan (drag-and-drop friendly).
-- Save the report **next to the scanned folder** by default; ask "save somewhere
-  else? (Y/N)" and only prompt for a folder if Y.
+- Check the sequence FIRST. Only if gaps are found: offer to save a report
+  (default location = the scanned folder; ask "save somewhere else? (Y/N)" and
+  only prompt for a folder if Y). A complete sequence writes nothing and never
+  prompts.
 - Scan **every** file type.
 - Auto-detect the sequence number: reduce each name to a "shape" by replacing
   digit-runs with `#`, group by shape, and pick the digit slot that **varies**

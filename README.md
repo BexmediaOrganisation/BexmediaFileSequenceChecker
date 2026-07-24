@@ -46,10 +46,13 @@ Download **`BexmediaFileSequenceChecker.zip`**, then unzip it. Inside:
    *(If you see a red "execution policy" error, see
    [Troubleshooting](#troubleshooting-windows).)*
 3. A window opens. **Drag your footage folder** into it and press **Enter**.
-4. By default the report is saved **in that same folder**. It asks if you want
-   to save it somewhere else — press **Enter** for no, or type **Y** and drag a
-   different folder in.
-5. Read the report. A `MissingFiles_<date>.txt` file is saved where you chose.
+4. It checks the sequence and shows the result on screen.
+   - **If everything is complete**, it just says so — nothing is saved.
+   - **If there are gaps**, it offers to save a report (default: the same
+     folder you checked). Press **Enter** to save it there, or type **Y** and
+     drag a different folder in.
+5. If gaps were found, a `MissingFiles_<date>.txt` file is saved where you
+   chose.
 
 ---
 
@@ -63,10 +66,13 @@ The very first time only, you need to allow the file to run:
    *(You only do this once.)*
 4. A Terminal window opens. **Drag your footage folder** into it and press
    **Return**.
-5. By default the report is saved **in that same folder**. It asks if you want
-   to save it somewhere else — press **Return** for no, or type **Y** and drag
-   a different folder in.
-6. Read the report. A `MissingFiles_<date>.txt` file is saved where you chose.
+5. It checks the sequence and shows the result on screen.
+   - **If everything is complete**, it just says so — nothing is saved.
+   - **If there are gaps**, it offers to save a report (default: the same
+     folder you checked). Press **Return** to save it there, or type **Y** and
+     drag a different folder in.
+6. If gaps were found, a `MissingFiles_<date>.txt` file is saved where you
+   chose.
 
 From then on you can just double-click it.
 
@@ -99,6 +105,9 @@ Saved full list to: ...\CLIP\MissingFiles_20260724_143022.txt
 
 ## Good to know
 
+- **It only saves a file when something is wrong.** If every sequence is
+  complete it just tells you on screen and saves nothing — you'll only get a
+  `MissingFiles_<date>.txt` when there are actually gaps to record.
 - **It works out which number matters automatically.** Even when a name also
   has a date in it (`BEXFX30_20260721_5348.MP4`), it correctly reads the clip
   number (`5348`) by spotting which number actually changes across the files —

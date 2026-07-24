@@ -18,11 +18,13 @@ filenames in the folder you point it at.
 
 2. A window opens.
      - Drag your FOOTAGE folder into the window, press Enter.
-     - By default the report is saved IN that same folder. It asks if
-       you want it somewhere else - press Enter for no, or type Y and
-       drag a different folder in.
+     - It checks the sequence and shows the result.
+       * If everything is complete, it just says so - nothing is saved.
+       * If there are gaps, it offers to save a report (default: the
+         same folder you checked). Press Enter to save it there, or
+         type Y and drag a different folder in.
 
-3. Read the results. A file called
+3. If gaps were found, a file called
      MissingFiles_<date>.txt
    is saved in the folder you chose.
 
@@ -42,11 +44,13 @@ once, then try again:
 
 2. A Terminal window opens.
      - Drag your FOOTAGE folder into the window, press Return.
-     - By default the report is saved IN that same folder. It asks if
-       you want it somewhere else - press Return for no, or type Y and
-       drag a different folder in.
+     - It checks the sequence and shows the result.
+       * If everything is complete, it just says so - nothing is saved.
+       * If there are gaps, it offers to save a report (default: the
+         same folder you checked). Press Return to save it there, or
+         type Y and drag a different folder in.
 
-3. Read the results. A file called
+3. If gaps were found, a file called
      MissingFiles_<date>.txt
    is saved in the folder you chose.
 
