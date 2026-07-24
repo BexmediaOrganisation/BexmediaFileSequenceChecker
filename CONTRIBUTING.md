@@ -19,6 +19,13 @@ Both scripts implement the **same** behaviour and should be kept in sync:
   (default location = the scanned folder; ask "save somewhere else? (Y/N)" and
   only prompt for a folder if Y). A complete sequence writes nothing and never
   prompts.
+- On screen, draw the whole sequence with present numbers green and missing
+  numbers red (ANSI colours in bash / `Write-Host -ForegroundColor` in PS).
+- On save, write BOTH `MissingFiles_<stamp>.txt` (plain) and
+  `MissingFiles_<stamp>.html` (colour-coded green/red chips with a "Show
+  missing only" filter button; self-contained, no external assets). In the Mac
+  script the HTML is built in bash from `SEQ\t...` lines the awk emits to
+  stdout; keep those lines out of the `.txt`.
 - Scan **every** file type.
 - Auto-detect the sequence number: reduce each name to a "shape" by replacing
   digit-runs with `#`, group by shape, and pick the digit slot that **varies**

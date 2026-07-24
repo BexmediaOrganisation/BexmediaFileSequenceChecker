@@ -46,6 +46,10 @@ strip_quotes() {
     echo "$s" | sed 's/[[:space:]]*$//'
 }
 
+html_escape() {
+    printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
+}
+
 # --- Ask for the folder to check --------------------------------------------
 if [ -z "$SCAN_PATH" ]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -248,6 +252,25 @@ END {
                 grand++
             }
             print ""
+
+            # --- On-screen colour map (green present / red missing) ---
+            printf "    Sequence (\033[32mgreen = present\033[0m, \033[31mred = MISSING\033[0m):\n" > "/dev/stderr"
+            printf "    "                                         > "/dev/stderr"
+            col=0
+            for (v=mn; v<=mx; v++) {
+                tok=sprintf("%0" pad "d", v)
+                if (v in present) printf "\033[32m%s\033[0m ", tok > "/dev/stderr"
+                else              printf "\033[31m%s\033[0m ", tok > "/dev/stderr"
+                col++
+                if (col%10==0) { printf "\n    "                  > "/dev/stderr" }
+            }
+            printf "\n"                                           > "/dev/stderr"
+
+            # --- Machine-readable line for the HTML builder ---
+            # SEQ <tab> label <tab> min <tab> max <tab> pad <tab> space-joined-present
+            plist=""
+            for (v=mn; v<=mx; v++) if (v in present) plist=plist v " "
+            printf "SEQ\t%s\t%d\t%d\t%d\t%s\n", label, mn, mx, pad, plist
         } else {
             print "    No gaps - sequence is complete."           > "/dev/stderr"
         }
@@ -312,22 +335,99 @@ if [ "${GRAND:-0}" -gt 0 ] 2>/dev/null; then
         OUT_FOLDER="$DEFAULT_OUT"
     fi
 
+    CREATED="$(date '+%Y-%m-%d %H:%M:%S')"
     OUT_FILE="$OUT_FOLDER/MissingFiles_$STAMP.txt"
+    HTML_FILE="$OUT_FOLDER/MissingFiles_$STAMP.html"
+
+    # --- Plain text report (SEQ lines are skipped) ---
     {
         echo "Missing files report"
         echo "Scanned : $SCAN_PATH"
-        echo "Created : $(date '+%Y-%m-%d %H:%M:%S')"
+        echo "Created : $CREATED"
         echo "Total missing : $GRAND"
         echo ""
-        # everything between SECTIONS_FOLLOW and TOTAL
         printf '%s\n' "$REPORT" | awk '
             /^SECTIONS_FOLLOW$/ { on=1; next }
             /^TOTAL /           { on=0 }
+            /^SEQ\t/            { next }        # machine data, not for the txt
             on { print }
         '
     } > "$OUT_FILE"
+
+    # --- Colour HTML report (green present / red missing, with a filter) ---
+    {
+        cat <<HTMLHEAD
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missing Files Report</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; color: #1c1c1e; background: #fff; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .meta { color: #666; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+  .controls { position: sticky; top: 0; background: #fff; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 16px; }
+  button { font-size: 14px; padding: 8px 14px; border: 1px solid #ccc; border-radius: 8px; background: #f6f6f6; cursor: pointer; }
+  button.active { background: #1c1c1e; color: #fff; border-color: #1c1c1e; }
+  .legend { display: inline-block; margin-left: 12px; font-size: 13px; color: #555; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin: 0 4px 0 10px; }
+  .seq { margin-bottom: 28px; }
+  .seq h2 { font-size: 15px; margin: 0 0 2px; font-family: Consolas, monospace; }
+  .seq .sub { color: #666; font-size: 12px; margin-bottom: 8px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 4px; }
+  .num { font-family: Consolas, monospace; font-size: 13px; padding: 4px 7px; border-radius: 5px; }
+  .present { background: #e4f7e4; color: #1a7f1a; }
+  .missing { background: #fde3e3; color: #c62222; font-weight: 700; }
+  body.missing-only .present { display: none; }
+</style></head><body>
+<h1>Missing files report</h1>
+<div class="meta">
+  Scanned: $(html_escape "$SCAN_PATH")<br>
+  Created: $(html_escape "$CREATED")<br>
+  Total missing: $GRAND
+</div>
+<div class="controls">
+  <button id="btnAll" class="active" onclick="setFilter(false)">Show all</button>
+  <button id="btnMiss" onclick="setFilter(true)">Show missing only</button>
+  <span class="legend"><span class="swatch present"></span>present<span class="swatch missing"></span>missing</span>
+</div>
+HTMLHEAD
+
+        # One .seq block per SEQ line
+        printf '%s\n' "$REPORT" | awk -F'\t' '
+            function esc(s){ gsub(/&/,"\\&amp;",s); gsub(/</,"\\&lt;",s); gsub(/>/,"\\&gt;",s); return s }
+            /^SEQ\t/ {
+                label=$2; mn=$3; mx=$4; pad=$5; plist=$6
+                split(plist, arr, " ")
+                delete pres
+                for (i in arr) if (arr[i]!="") pres[arr[i]+0]=1
+                miss=0
+                for (v=mn; v<=mx; v++) if (!(v in pres)) miss++
+                printf "<div class=\"seq\"><h2>%s</h2>", esc(label)
+                printf "<div class=\"sub\">Range %d to %d &middot; %d missing</div><div class=\"grid\">", mn, mx, miss
+                for (v=mn; v<=mx; v++) {
+                    tok=sprintf("%0" pad "d", v)
+                    if (v in pres) printf "<span class=\"num present\">%s</span>", tok
+                    else           printf "<span class=\"num missing\">%s</span>", tok
+                }
+                print "</div></div>"
+            }
+        '
+
+        cat <<'HTMLFOOT'
+<script>
+function setFilter(missingOnly){
+  document.body.classList.toggle('missing-only', missingOnly);
+  document.getElementById('btnMiss').classList.toggle('active', missingOnly);
+  document.getElementById('btnAll').classList.toggle('active', !missingOnly);
+}
+</script>
+</body></html>
+HTMLFOOT
+    } > "$HTML_FILE"
+
     echo ""
-    echo "  Saved full list to: $OUT_FILE"
+    echo "  Saved plain list to : $OUT_FILE"
+    echo "  Saved colour report: $HTML_FILE"
 else
     echo ""
     echo "  All sequences complete - no gaps found. Nothing to save."

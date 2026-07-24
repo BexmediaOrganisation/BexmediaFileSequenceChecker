@@ -98,8 +98,19 @@ Sequence: 'BEXFX30_20260721_#.MP4'
     BEXFX30_20260721_5354.MP4
     BEXFX30_20260721_5355.MP4
 
-Saved full list to: ...\CLIP\MissingFiles_20260724_143022.txt
+Saved plain list to : ...\CLIP\MissingFiles_20260724_143022.txt
+Saved colour report: ...\CLIP\MissingFiles_20260724_143022.html
 ```
+
+On screen, the whole sequence is also drawn out with **present numbers in
+green** and **missing ones in red**, so a gap jumps out at a glance.
+
+### The colour report (HTML)
+
+When gaps are found you also get a **colour HTML report** you can open in any
+browser (double-click it) and share. It shows every number in the sequence as
+a green (present) or red (missing) chip, and has a **"Show missing only"**
+button so you can filter down to just the gaps with one click.
 
 ---
 

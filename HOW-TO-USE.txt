@@ -6,6 +6,10 @@ This tool checks a folder of files (video, images, XML - any type) and
 tells you if any numbers are MISSING from the sequence. It's handy for
 spotting a lost or un-copied clip before it becomes a problem.
 
+When it finds gaps you get TWO reports: a plain text list, and a colour
+HTML report you can open in a browser (whole sequence shown, present in
+green and missing in red, with a "Show missing only" filter button).
+
 Nothing is installed. Nothing leaves your computer. It only reads the
 filenames in the folder you point it at.
 
@@ -24,9 +28,9 @@ filenames in the folder you point it at.
          same folder you checked). Press Enter to save it there, or
          type Y and drag a different folder in.
 
-3. If gaps were found, a file called
-     MissingFiles_<date>.txt
-   is saved in the folder you chose.
+3. If gaps were found, two files are saved in the folder you chose:
+     MissingFiles_<date>.txt   (plain list)
+     MissingFiles_<date>.html  (colour report - open in a browser)
 
 If you see a red "execution policy" error, open PowerShell and run this
 once, then try again:
@@ -50,9 +54,9 @@ once, then try again:
          same folder you checked). Press Return to save it there, or
          type Y and drag a different folder in.
 
-3. If gaps were found, a file called
-     MissingFiles_<date>.txt
-   is saved in the folder you chose.
+3. If gaps were found, two files are saved in the folder you chose:
+     MissingFiles_<date>.txt   (plain list)
+     MissingFiles_<date>.html  (colour report - open in a browser)
 
 If it says "permission denied", open Terminal, type:  chmod +x
 (with a space after it), drag the .command file in, press Return, then
