@@ -227,9 +227,12 @@ foreach ($g in $groups) {
         }
         Write-Host ""
 
-        # Capture for the HTML report
+        # Capture for the HTML report (Prefix/Suffix/Ext let us rebuild full names)
         $sequenceData.Add([pscustomobject]@{
             Label   = $label
+            Prefix  = $prefix
+            Suffix  = $suffix
+            Ext     = $ext
             Min     = $min
             Max     = $max
             Padding = $padding
@@ -297,9 +300,16 @@ if ($missingReport.Count -gt 0) {
     }
     $lines | Set-Content -Path $outFile -Encoding UTF8
 
-    # --- Colour HTML report (green = present, red = missing, with a filter) ---
+    # --- Colour HTML report: full filenames, paired sequences side by side ---
+    # Sequences that cover the same number range (e.g. an MP4 and its matching
+    # M01.XML sidecar) are grouped into one table, one column each, so each
+    # number's files sit on the same row.
     $sb = [System.Text.StringBuilder]::new()
     function Enc([string]$s) { [System.Net.WebUtility]::HtmlEncode($s) }
+
+    # Group sequences by their number range so pairs line up.
+    $rangeGroups = $sequenceData | Group-Object { "$($_.Min)-$($_.Max)" }
+
     [void]$sb.Append(@"
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
@@ -309,19 +319,22 @@ if ($missingReport.Count -gt 0) {
   body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; color: #1c1c1e; background: #fff; }
   h1 { font-size: 20px; margin: 0 0 4px; }
   .meta { color: #666; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
-  .controls { position: sticky; top: 0; background: #fff; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 16px; }
+  .controls { position: sticky; top: 0; background: #fff; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 16px; z-index: 5; }
   button { font-size: 14px; padding: 8px 14px; border: 1px solid #ccc; border-radius: 8px; background: #f6f6f6; cursor: pointer; }
   button.active { background: #1c1c1e; color: #fff; border-color: #1c1c1e; }
   .legend { display: inline-block; margin-left: 12px; font-size: 13px; color: #555; }
   .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin: 0 4px 0 10px; }
-  .seq { margin-bottom: 28px; }
-  .seq h2 { font-size: 15px; margin: 0 0 2px; font-family: Consolas, monospace; }
-  .seq .sub { color: #666; font-size: 12px; margin-bottom: 8px; }
-  .grid { display: flex; flex-wrap: wrap; gap: 4px; }
-  .num { font-family: Consolas, monospace; font-size: 13px; padding: 4px 7px; border-radius: 5px; }
-  .present { background: #e4f7e4; color: #1a7f1a; }
-  .missing { background: #fde3e3; color: #c62222; font-weight: 700; }
-  body.missing-only .present { display: none; }
+  .swatch.present { background: #e4f7e4; } .swatch.missing { background: #fde3e3; }
+  .grp { margin-bottom: 32px; }
+  .grp .sub { color: #666; font-size: 12px; margin: 0 0 8px; }
+  table { border-collapse: collapse; font-family: Consolas, monospace; font-size: 13px; }
+  th { text-align: left; padding: 6px 10px; border-bottom: 2px solid #ddd; font-size: 13px; white-space: nowrap; }
+  td { padding: 3px 10px; white-space: nowrap; }
+  tr.allpresent td { }
+  td.present { color: #1a7f1a; }
+  td.missing { color: #c62222; font-weight: 700; background: #fde3e3; }
+  td.num { color: #999; text-align: right; border-right: 1px solid #eee; }
+  body.missing-only tr.allpresent { display: none; }
 </style></head><body>
 <h1>Missing files report</h1>
 <div class="meta">
@@ -335,20 +348,40 @@ if ($missingReport.Count -gt 0) {
   <span class="legend"><span class="swatch present"></span>present<span class="swatch missing"></span>missing</span>
 </div>
 "@)
-    foreach ($sd in $sequenceData) {
-        [void]$sb.Append("<div class=`"seq`"><h2>$(Enc $sd.Label)</h2>")
-        [void]$sb.Append("<div class=`"sub`">Range $($sd.Min) to $($sd.Max) &middot; $($sd.Missing.Count) missing</div>")
-        [void]$sb.Append("<div class=`"grid`">")
-        for ($i = $sd.Min; $i -le $sd.Max; $i++) {
-            $token = ([string]$i).PadLeft($sd.Padding,'0')
-            if ($sd.Present.Contains([int64]$i)) {
-                [void]$sb.Append("<span class=`"num present`">$token</span>")
-            } else {
-                [void]$sb.Append("<span class=`"num missing`">$token</span>")
+
+    foreach ($rg in $rangeGroups) {
+        # Sort columns by label so order is stable (.MP4 before M01.XML)
+        $cols   = @($rg.Group | Sort-Object Label)   # 1+ sequences sharing this range
+        $gMin   = $cols[0].Min
+        $gMax   = $cols[0].Max
+        $missSum = ($cols | ForEach-Object { $_.Missing.Count } | Measure-Object -Sum).Sum
+
+        [void]$sb.Append("<div class=`"grp`">")
+        [void]$sb.Append("<div class=`"sub`">Range $gMin to $gMax &middot; $missSum missing across $($cols.Count) file type$(if($cols.Count -ne 1){'s'})</div>")
+        [void]$sb.Append("<table><thead><tr><th>#</th>")
+        foreach ($c in $cols) { [void]$sb.Append("<th>$(Enc $c.Label)</th>") }
+        [void]$sb.Append("</tr></thead><tbody>")
+
+        for ($i = $gMin; $i -le $gMax; $i++) {
+            $token = ([string]$i).PadLeft($cols[0].Padding,'0')
+            # Is every column present for this number? Then the row is 'all present'.
+            $anyMissing = $false
+            foreach ($c in $cols) { if (-not $c.Present.Contains([int64]$i)) { $anyMissing = $true; break } }
+            $rowClass = if ($anyMissing) { "" } else { " class=`"allpresent`"" }
+            [void]$sb.Append("<tr$rowClass><td class=`"num`">$token</td>")
+            foreach ($c in $cols) {
+                $fname = "$($c.Prefix)$token$($c.Suffix)$($c.Ext)"
+                if ($c.Present.Contains([int64]$i)) {
+                    [void]$sb.Append("<td class=`"present`">$(Enc $fname)</td>")
+                } else {
+                    [void]$sb.Append("<td class=`"missing`">$(Enc $fname)</td>")
+                }
             }
+            [void]$sb.Append("</tr>")
         }
-        [void]$sb.Append("</div></div>")
+        [void]$sb.Append("</tbody></table></div>")
     }
+
     [void]$sb.Append(@"
 <script>
 function setFilter(missingOnly){

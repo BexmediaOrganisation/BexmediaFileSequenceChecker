@@ -17,8 +17,11 @@ BEXFX30_20260721_5352.MP4
 It gives you:
 
 - a short summary of the gaps (e.g. `5354 - 5355 (2 files)`),
-- a full list of every missing file's name, and
-- a saved text file (`MissingFiles_<date>.txt`) you can keep or send on.
+- an on-screen view of the whole sequence with present numbers in **green** and
+  missing ones in **red**, and
+- two saved reports you can keep or send on: a plain text list
+  (`MissingFiles_<date>.txt`) and a colour report you open in a browser
+  (`MissingFiles_<date>.html`).
 
 There is nothing to install, and **nothing ever leaves your computer** — the
 tool only reads filenames.
@@ -51,8 +54,9 @@ Download **`BexmediaFileSequenceChecker.zip`**, then unzip it. Inside:
    - **If there are gaps**, it offers to save a report (default: the same
      folder you checked). Press **Enter** to save it there, or type **Y** and
      drag a different folder in.
-5. If gaps were found, a `MissingFiles_<date>.txt` file is saved where you
-   chose.
+5. If gaps were found, two reports are saved where you chose — a plain
+   `MissingFiles_<date>.txt` and a colour `MissingFiles_<date>.html`
+   (double-click the `.html` to open it in a browser).
 
 ---
 
@@ -71,8 +75,9 @@ The very first time only, you need to allow the file to run:
    - **If there are gaps**, it offers to save a report (default: the same
      folder you checked). Press **Return** to save it there, or type **Y** and
      drag a different folder in.
-6. If gaps were found, a `MissingFiles_<date>.txt` file is saved where you
-   chose.
+6. If gaps were found, two reports are saved where you chose — a plain
+   `MissingFiles_<date>.txt` and a colour `MissingFiles_<date>.html`
+   (double-click the `.html` to open it in a browser).
 
 From then on you can just double-click it.
 
@@ -108,17 +113,23 @@ green** and **missing ones in red**, so a gap jumps out at a glance.
 ### The colour report (HTML)
 
 When gaps are found you also get a **colour HTML report** you can open in any
-browser (double-click it) and share. It shows every number in the sequence as
-a green (present) or red (missing) chip, and has a **"Show missing only"**
-button so you can filter down to just the gaps with one click.
+browser (double-click it) and share. It lists the **full filename** for every
+number in the sequence, one per row, coloured green (present) or red (missing).
+
+- **Paired files sit side by side.** If a clip has a matching sidecar — e.g. an
+  `.MP4` and its `.XML` — they share the same numbers, so the report puts them
+  in two columns on the same row. You can see at a glance whether both the clip
+  and its sidecar made it across.
+- **"Show missing only"** button hides every complete row, leaving just the
+  rows that have something missing.
 
 ---
 
 ## Good to know
 
-- **It only saves a file when something is wrong.** If every sequence is
-  complete it just tells you on screen and saves nothing — you'll only get a
-  `MissingFiles_<date>.txt` when there are actually gaps to record.
+- **It only saves files when something is wrong.** If every sequence is
+  complete it just tells you on screen and saves nothing — you'll only get the
+  `MissingFiles_<date>` reports when there are actually gaps to record.
 - **It works out which number matters automatically.** Even when a name also
   has a date in it (`BEXFX30_20260721_5348.MP4`), it correctly reads the clip
   number (`5348`) by spotting which number actually changes across the files —

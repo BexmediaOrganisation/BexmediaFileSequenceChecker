@@ -267,10 +267,11 @@ END {
             printf "\n"                                           > "/dev/stderr"
 
             # --- Machine-readable line for the HTML builder ---
-            # SEQ <tab> label <tab> min <tab> max <tab> pad <tab> space-joined-present
+            # SEQ <tab> label <tab> min <tab> max <tab> pad <tab> prefix <tab>
+            #     suffix <tab> ext <tab> space-joined-present-numbers
             plist=""
             for (v=mn; v<=mx; v++) if (v in present) plist=plist v " "
-            printf "SEQ\t%s\t%d\t%d\t%d\t%s\n", label, mn, mx, pad, plist
+            printf "SEQ\t%s\t%d\t%d\t%d\t%s\t%s\t%s\t%s\n", label, mn, mx, pad, tmpl_prefix, tmpl_suffix, tmpl_ext, plist
         } else {
             print "    No gaps - sequence is complete."           > "/dev/stderr"
         }
@@ -365,19 +366,21 @@ if [ "${GRAND:-0}" -gt 0 ] 2>/dev/null; then
   body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; color: #1c1c1e; background: #fff; }
   h1 { font-size: 20px; margin: 0 0 4px; }
   .meta { color: #666; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
-  .controls { position: sticky; top: 0; background: #fff; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 16px; }
+  .controls { position: sticky; top: 0; background: #fff; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 16px; z-index: 5; }
   button { font-size: 14px; padding: 8px 14px; border: 1px solid #ccc; border-radius: 8px; background: #f6f6f6; cursor: pointer; }
   button.active { background: #1c1c1e; color: #fff; border-color: #1c1c1e; }
   .legend { display: inline-block; margin-left: 12px; font-size: 13px; color: #555; }
   .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin: 0 4px 0 10px; }
-  .seq { margin-bottom: 28px; }
-  .seq h2 { font-size: 15px; margin: 0 0 2px; font-family: Consolas, monospace; }
-  .seq .sub { color: #666; font-size: 12px; margin-bottom: 8px; }
-  .grid { display: flex; flex-wrap: wrap; gap: 4px; }
-  .num { font-family: Consolas, monospace; font-size: 13px; padding: 4px 7px; border-radius: 5px; }
-  .present { background: #e4f7e4; color: #1a7f1a; }
-  .missing { background: #fde3e3; color: #c62222; font-weight: 700; }
-  body.missing-only .present { display: none; }
+  .swatch.present { background: #e4f7e4; } .swatch.missing { background: #fde3e3; }
+  .grp { margin-bottom: 32px; }
+  .grp .sub { color: #666; font-size: 12px; margin: 0 0 8px; }
+  table { border-collapse: collapse; font-family: Consolas, monospace; font-size: 13px; }
+  th { text-align: left; padding: 6px 10px; border-bottom: 2px solid #ddd; font-size: 13px; white-space: nowrap; }
+  td { padding: 3px 10px; white-space: nowrap; }
+  td.present { color: #1a7f1a; }
+  td.missing { color: #c62222; font-weight: 700; background: #fde3e3; }
+  td.num { color: #999; text-align: right; border-right: 1px solid #eee; }
+  body.missing-only tr.allpresent { display: none; }
 </style></head><body>
 <h1>Missing files report</h1>
 <div class="meta">
@@ -392,24 +395,71 @@ if [ "${GRAND:-0}" -gt 0 ] 2>/dev/null; then
 </div>
 HTMLHEAD
 
-        # One .seq block per SEQ line
+        # Build one table per range group. Sequences sharing a number range
+        # (e.g. an MP4 and its M01.XML sidecar) become side-by-side columns,
+        # one row per number, each cell the full reconstructed filename.
         printf '%s\n' "$REPORT" | awk -F'\t' '
             function esc(s){ gsub(/&/,"\\&amp;",s); gsub(/</,"\\&lt;",s); gsub(/>/,"\\&gt;",s); return s }
             /^SEQ\t/ {
-                label=$2; mn=$3; mx=$4; pad=$5; plist=$6
-                split(plist, arr, " ")
-                delete pres
-                for (i in arr) if (arr[i]!="") pres[arr[i]+0]=1
-                miss=0
-                for (v=mn; v<=mx; v++) if (!(v in pres)) miss++
-                printf "<div class=\"seq\"><h2>%s</h2>", esc(label)
-                printf "<div class=\"sub\">Range %d to %d &middot; %d missing</div><div class=\"grid\">", mn, mx, miss
-                for (v=mn; v<=mx; v++) {
-                    tok=sprintf("%0" pad "d", v)
-                    if (v in pres) printf "<span class=\"num present\">%s</span>", tok
-                    else           printf "<span class=\"num missing\">%s</span>", tok
+                # $2 label $3 min $4 max $5 pad $6 prefix $7 suffix $8 ext $9 plist
+                n++
+                s_label[n]=$2; s_min[n]=$3; s_max[n]=$4; s_pad[n]=$5
+                s_prefix[n]=$6; s_suffix[n]=$7; s_ext[n]=$8; s_plist[n]=$9
+                key=$3 "-" $4
+                if (!(key in gseen)) { gseen[key]=1; gorder[++gcount]=key }
+                # append this sequence index to the group
+                gmembers[key]=gmembers[key] n " "
+            }
+            END {
+                for (gi=1; gi<=gcount; gi++) {
+                    key=gorder[gi]
+                    cnt=split(gmembers[key], mem, " ")
+                    # trailing empty token from split
+                    realcnt=0
+                    for (m=1;m<=cnt;m++) if (mem[m]!="") { realcnt++; idx[realcnt]=mem[m]+0 }
+                    if (realcnt==0) continue
+                    # Sort columns by label so order is stable (.MP4 before M01.XML)
+                    for (a=1;a<realcnt;a++) for (b=a+1;b<=realcnt;b++)
+                        if (s_label[idx[b]] < s_label[idx[a]]) { t=idx[a]; idx[a]=idx[b]; idx[b]=t }
+                    first=idx[1]
+                    mn=s_min[first]; mx=s_max[first]; pad=s_pad[first]
+
+                    # per-member present sets + total missing
+                    totmiss=0
+                    for (c=1;c<=realcnt;c++) {
+                        si=idx[c]
+                        split(s_plist[si], parr, " ")
+                        delete pres
+                        for (p in parr) if (parr[p]!="") pres[parr[p]+0]=1
+                        # store into a 2D-ish keyed array
+                        for (v=mn; v<=mx; v++) { P[c SUBSEP v] = (v in pres) ? 1 : 0; if (!(v in pres)) totmiss++ }
+                    }
+
+                    plural=(realcnt==1)?"":"s"
+                    printf "<div class=\"grp\">"
+                    printf "<div class=\"sub\">Range %d to %d &middot; %d missing across %d file type%s</div>", mn, mx, totmiss, realcnt, plural
+                    printf "<table><thead><tr><th>#</th>"
+                    for (c=1;c<=realcnt;c++) printf "<th>%s</th>", esc(s_label[idx[c]])
+                    printf "</tr></thead><tbody>"
+
+                    for (v=mn; v<=mx; v++) {
+                        tok=sprintf("%0" pad "d", v)
+                        anymiss=0
+                        for (c=1;c<=realcnt;c++) if (!P[c SUBSEP v]) { anymiss=1; break }
+                        rowcls = anymiss ? "" : " class=\"allpresent\""
+                        printf "<tr%s><td class=\"num\">%s</td>", rowcls, tok
+                        for (c=1;c<=realcnt;c++) {
+                            si=idx[c]
+                            fname=s_prefix[si] tok s_suffix[si] s_ext[si]
+                            if (P[c SUBSEP v]) printf "<td class=\"present\">%s</td>", esc(fname)
+                            else               printf "<td class=\"missing\">%s</td>", esc(fname)
+                        }
+                        printf "</tr>"
+                    }
+                    printf "</tbody></table></div>\n"
+                    # clear P for next group
+                    delete P
                 }
-                print "</div></div>"
             }
         '
 

@@ -22,10 +22,15 @@ Both scripts implement the **same** behaviour and should be kept in sync:
 - On screen, draw the whole sequence with present numbers green and missing
   numbers red (ANSI colours in bash / `Write-Host -ForegroundColor` in PS).
 - On save, write BOTH `MissingFiles_<stamp>.txt` (plain) and
-  `MissingFiles_<stamp>.html` (colour-coded green/red chips with a "Show
-  missing only" filter button; self-contained, no external assets). In the Mac
-  script the HTML is built in bash from `SEQ\t...` lines the awk emits to
-  stdout; keep those lines out of the `.txt`.
+  `MissingFiles_<stamp>.html` (self-contained, no external assets). The HTML is
+  a table per range group: one row per number, **full reconstructed filename**
+  in each cell (green present / red missing), and sequences that share a range
+  (e.g. an MP4 and its M01.XML sidecar) become **side-by-side columns** so they
+  pair up. Rows where every column is present get class `allpresent`; the "Show
+  missing only" button hides those. Columns are sorted by label for a stable
+  order. In the Mac script the HTML is built in bash/awk from `SEQ\t...` lines
+  the scanning awk emits to stdout (label, min, max, pad, prefix, suffix, ext,
+  present-list); keep those lines out of the `.txt`.
 - Scan **every** file type.
 - Auto-detect the sequence number: reduce each name to a "shape" by replacing
   digit-runs with `#`, group by shape, and pick the digit slot that **varies**
