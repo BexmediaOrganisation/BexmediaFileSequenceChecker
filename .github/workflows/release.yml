@@ -26,7 +26,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Force -Path dist | Out-Null
-          Copy-Item Find-SequenceGaps.ps1, find-sequence-gaps.command, HOW-TO-USE.txt, README.md -Destination dist
+          Copy-Item BexmediaFileSequenceChecker_Win.ps1, BexmediaFileSequenceChecker_Mac.command, HOW-TO-USE.txt, README.md -Destination dist
           if (Test-Path BexmediaFileSequenceChecker.zip) { Remove-Item BexmediaFileSequenceChecker.zip }
           Compress-Archive -Path dist\* -DestinationPath BexmediaFileSequenceChecker.zip -Force
           Write-Host "Built BexmediaFileSequenceChecker.zip"
@@ -41,7 +41,7 @@ jobs:
           $tag = "${{ github.ref_name }}"
           gh release create $tag BexmediaFileSequenceChecker.zip `
             --title "Bexmedia File Sequence Checker $tag" `
-            --notes "Download **BexmediaFileSequenceChecker.zip**, unzip it, and follow HOW-TO-USE.txt. Windows: Find-SequenceGaps.ps1. Mac: find-sequence-gaps.command."
+            --notes "Download **BexmediaFileSequenceChecker.zip**, unzip it, and follow HOW-TO-USE.txt. Windows: BexmediaFileSequenceChecker_Win.ps1. Mac: BexmediaFileSequenceChecker_Mac.command."
 
       - name: Upload as a build artifact
         uses: actions/upload-artifact@v4

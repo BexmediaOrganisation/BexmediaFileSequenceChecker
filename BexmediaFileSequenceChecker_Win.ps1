@@ -1,5 +1,5 @@
 <#
-    Find-SequenceGaps.ps1
+    BexmediaFileSequenceChecker_Win.ps1
     Bexmedia File Sequence Checker (Windows)
 
     Scans a folder and reports any missing numbers in the filename sequence,
@@ -10,10 +10,10 @@
     never clash. That means it works whatever kinds of file are in the folder.
 
     Just run it and follow the prompts (drag a folder in). Or from PowerShell:
-        .\Find-SequenceGaps.ps1 -Path "D:\Footage\CLIP"
-        .\Find-SequenceGaps.ps1 -Path "D:\Footage" -Recurse
-        .\Find-SequenceGaps.ps1 -Path "D:\Footage\CLIP" -OutFolder "D:\Reports"
-        .\Find-SequenceGaps.ps1 -Path "D:\Footage\CLIP" -Extensions mp4,xml
+        .\BexmediaFileSequenceChecker_Win.ps1 -Path "D:\Footage\CLIP"
+        .\BexmediaFileSequenceChecker_Win.ps1 -Path "D:\Footage" -Recurse
+        .\BexmediaFileSequenceChecker_Win.ps1 -Path "D:\Footage\CLIP" -OutFolder "D:\Reports"
+        .\BexmediaFileSequenceChecker_Win.ps1 -Path "D:\Footage\CLIP" -Extensions mp4,xml
 #>
 
 param(

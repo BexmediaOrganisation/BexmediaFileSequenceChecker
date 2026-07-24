@@ -14,7 +14,7 @@ filenames in the folder you point it at.
  WINDOWS
 --------------------------------------------------------
 
-1. Right-click  "Find-SequenceGaps.ps1"  ->  Run with PowerShell.
+1. Right-click  "BexmediaFileSequenceChecker_Win.ps1"  ->  Run with PowerShell.
 
 2. A window opens.
      - Drag your FOOTAGE folder into the window, press Enter.
@@ -36,7 +36,7 @@ once, then try again:
 --------------------------------------------------------
 
 1. The FIRST time only: right-click (or Control-click)
-     "find-sequence-gaps.command"  ->  Open
+     "BexmediaFileSequenceChecker_Mac.command"  ->  Open
    Then click "Open" again on the warning. (Once only.)
 
 2. A Terminal window opens.

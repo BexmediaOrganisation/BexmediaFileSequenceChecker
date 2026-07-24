@@ -33,8 +33,8 @@ Download **`BexmediaFileSequenceChecker.zip`**, then unzip it. Inside:
 
 | File | For |
 |------|-----|
-| `Find-SequenceGaps.ps1` | **Windows** |
-| `find-sequence-gaps.command` | **Mac** |
+| `BexmediaFileSequenceChecker_Win.ps1` | **Windows** |
+| `BexmediaFileSequenceChecker_Mac.command` | **Mac** |
 | `HOW-TO-USE.txt` | A plain-English quick start |
 
 ---
@@ -42,7 +42,7 @@ Download **`BexmediaFileSequenceChecker.zip`**, then unzip it. Inside:
 ## How to use it — Windows
 
 1. Unzip the download and open the folder.
-2. **Right-click** `Find-SequenceGaps.ps1` → **Run with PowerShell**.
+2. **Right-click** `BexmediaFileSequenceChecker_Win.ps1` → **Run with PowerShell**.
    *(If you see a red "execution policy" error, see
    [Troubleshooting](#troubleshooting-windows).)*
 3. A window opens. **Drag your footage folder** into it and press **Enter**.
@@ -57,7 +57,7 @@ Download **`BexmediaFileSequenceChecker.zip`**, then unzip it. Inside:
 The very first time only, you need to allow the file to run:
 
 1. Unzip the download and open the folder.
-2. **Right-click** (or Control-click) `find-sequence-gaps.command` → **Open**.
+2. **Right-click** (or Control-click) `BexmediaFileSequenceChecker_Mac.command` → **Open**.
 3. Mac warns it's from an unidentified developer — click **Open** again.
    *(You only do this once.)*
 4. A Terminal window opens. **Drag your footage folder** into it and press
@@ -121,18 +121,18 @@ Run either script from a terminal and point it straight at a folder.
 **Windows (PowerShell):**
 
 ```powershell
-.\Find-SequenceGaps.ps1 -Path "Z:\Footage\CLIP"
-.\Find-SequenceGaps.ps1 -Path "Z:\Footage\CLIP" -OutFolder "Z:\Reports"
-.\Find-SequenceGaps.ps1 -Path "Z:\Footage" -Recurse
-.\Find-SequenceGaps.ps1 -Path "Z:\Footage\CLIP" -Extensions mp4,xml
+.\BexmediaFileSequenceChecker_Win.ps1 -Path "Z:\Footage\CLIP"
+.\BexmediaFileSequenceChecker_Win.ps1 -Path "Z:\Footage\CLIP" -OutFolder "Z:\Reports"
+.\BexmediaFileSequenceChecker_Win.ps1 -Path "Z:\Footage" -Recurse
+.\BexmediaFileSequenceChecker_Win.ps1 -Path "Z:\Footage\CLIP" -Extensions mp4,xml
 ```
 
 **Mac (Terminal):**
 
 ```bash
-./find-sequence-gaps.command "/Volumes/Footage/CLIP"
-./find-sequence-gaps.command "/Volumes/Footage/CLIP" "/Users/me/Reports"
-./find-sequence-gaps.command "/Volumes/Footage" --recurse
+./BexmediaFileSequenceChecker_Mac.command "/Volumes/Footage/CLIP"
+./BexmediaFileSequenceChecker_Mac.command "/Volumes/Footage/CLIP" "/Users/me/Reports"
+./BexmediaFileSequenceChecker_Mac.command "/Volumes/Footage" --recurse
 ```
 
 ---

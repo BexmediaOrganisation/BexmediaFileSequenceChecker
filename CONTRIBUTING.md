@@ -6,8 +6,8 @@ Internal notes for Bexmedia staff who maintain this tool.
 
 | File | Purpose |
 |------|---------|
-| `Find-SequenceGaps.ps1` | Windows script (PowerShell) |
-| `find-sequence-gaps.command` | Mac script (bash + awk) |
+| `BexmediaFileSequenceChecker_Win.ps1` | Windows script (PowerShell) |
+| `BexmediaFileSequenceChecker_Mac.command` | Mac script (bash + awk) |
 | `HOW-TO-USE.txt` | Plain-English guide, bundled into the release zip |
 | `README.md` | Main documentation |
 | `.github/workflows/release.yml` | Builds the release zip on a self-hosted runner |
@@ -30,13 +30,13 @@ Create a folder with a deliberate gap and run each script against it.
 Windows:
 
 ```powershell
-.\Find-SequenceGaps.ps1 -Path "C:\some\test\folder" -OutFolder "C:\temp"
+.\BexmediaFileSequenceChecker_Win.ps1 -Path "C:\some\test\folder" -OutFolder "C:\temp"
 ```
 
 Mac:
 
 ```bash
-./find-sequence-gaps.command "/path/to/test/folder" "/path/to/output"
+./BexmediaFileSequenceChecker_Mac.command "/path/to/test/folder" "/path/to/output"
 ```
 
 Good cases to cover: a plain `...5348.MP4` gap, Sony `...5348M01.XML`
@@ -64,7 +64,7 @@ runner is offline:
 
 ```powershell
 mkdir dist
-Copy-Item Find-SequenceGaps.ps1, find-sequence-gaps.command, HOW-TO-USE.txt dist\
+Copy-Item BexmediaFileSequenceChecker_Win.ps1, BexmediaFileSequenceChecker_Mac.command, HOW-TO-USE.txt dist\
 Compress-Archive -Path dist\* -DestinationPath BexmediaFileSequenceChecker.zip -Force
 gh release create v1.0.0 BexmediaFileSequenceChecker.zip --title "v1.0.0" --notes "..."
 ```

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  find-sequence-gaps.command
+#  BexmediaFileSequenceChecker_Mac.command
 #  Bexmedia File Sequence Checker (Mac)
 #
 #  Scans a folder and reports any missing numbers in the filename sequence,
@@ -19,9 +19,9 @@
 #       output folder so you can keep or share the list.
 #
 #  ADVANCED (from Terminal):
-#    ./find-sequence-gaps.command "/Volumes/Footage/CLIP"
-#    ./find-sequence-gaps.command "/Volumes/Footage/CLIP" "/Users/me/Reports"
-#    ./find-sequence-gaps.command "/Volumes/Footage" --recurse
+#    ./BexmediaFileSequenceChecker_Mac.command "/Volumes/Footage/CLIP"
+#    ./BexmediaFileSequenceChecker_Mac.command "/Volumes/Footage/CLIP" "/Users/me/Reports"
+#    ./BexmediaFileSequenceChecker_Mac.command "/Volumes/Footage" --recurse
 #
 
 RECURSE=0
