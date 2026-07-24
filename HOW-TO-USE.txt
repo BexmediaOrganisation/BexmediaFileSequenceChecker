@@ -72,4 +72,5 @@ try step 1 again.
   mixed in with your originals).
 
 
-Made by Bexmedia.  Property of Bexmedia - internal use.
+Made by Bexmedia.  Free for non-commercial use - see LICENSE.
+(Use and share it freely; just don't sell it or make money from it.)

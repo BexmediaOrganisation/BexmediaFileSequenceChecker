@@ -160,5 +160,7 @@ workflow packages the two scripts plus the guide into
 
 ---
 
-*Made by Bexmedia. Property of Bexmedia — internal use. No footage or data
-ever leaves your computer; this tool only reads filenames.*
+*Made by Bexmedia. Free to use for non-commercial purposes — see
+[LICENSE](LICENSE) (you may use and share it, just not sell it or make money
+from it). No footage or data ever leaves your computer; this tool only reads
+filenames.*
