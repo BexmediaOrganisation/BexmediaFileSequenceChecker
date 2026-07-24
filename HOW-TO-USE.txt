@@ -18,8 +18,9 @@ filenames in the folder you point it at.
 
 2. A window opens.
      - Drag your FOOTAGE folder into the window, press Enter.
-     - It asks if the report can go to your Downloads folder.
-       Press Enter for yes, or type N and drag a different folder in.
+     - By default the report is saved IN that same folder. It asks if
+       you want it somewhere else - press Enter for no, or type Y and
+       drag a different folder in.
 
 3. Read the results. A file called
      MissingFiles_<date>.txt
@@ -41,8 +42,9 @@ once, then try again:
 
 2. A Terminal window opens.
      - Drag your FOOTAGE folder into the window, press Return.
-     - It asks if the report can go to your Downloads folder.
-       Press Return for yes, or type N and drag a different folder in.
+     - By default the report is saved IN that same folder. It asks if
+       you want it somewhere else - press Return for no, or type Y and
+       drag a different folder in.
 
 3. Read the results. A file called
      MissingFiles_<date>.txt

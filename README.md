@@ -46,8 +46,9 @@ Download **`BexmediaFileSequenceChecker.zip`**, then unzip it. Inside:
    *(If you see a red "execution policy" error, see
    [Troubleshooting](#troubleshooting-windows).)*
 3. A window opens. **Drag your footage folder** into it and press **Enter**.
-4. It asks if the report can go to your **Downloads** folder — press **Enter**
-   for yes, or type **N** and drag a different folder in.
+4. By default the report is saved **in that same folder**. It asks if you want
+   to save it somewhere else — press **Enter** for no, or type **Y** and drag a
+   different folder in.
 5. Read the report. A `MissingFiles_<date>.txt` file is saved where you chose.
 
 ---
@@ -62,8 +63,9 @@ The very first time only, you need to allow the file to run:
    *(You only do this once.)*
 4. A Terminal window opens. **Drag your footage folder** into it and press
    **Return**.
-5. It asks if the report can go to your **Downloads** folder — press **Return**
-   for yes, or type **N** and drag a different folder in.
+5. By default the report is saved **in that same folder**. It asks if you want
+   to save it somewhere else — press **Return** for no, or type **Y** and drag
+   a different folder in.
 6. Read the report. A `MissingFiles_<date>.txt` file is saved where you chose.
 
 From then on you can just double-click it.
@@ -90,7 +92,7 @@ Sequence: 'BEXFX30_20260721_#.MP4'
     BEXFX30_20260721_5354.MP4
     BEXFX30_20260721_5355.MP4
 
-Saved full list to: ...\Downloads\MissingFiles_20260724_143022.txt
+Saved full list to: ...\CLIP\MissingFiles_20260724_143022.txt
 ```
 
 ---

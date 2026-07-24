@@ -58,30 +58,29 @@ if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
 }
 $Path = (Resolve-Path -LiteralPath $Path).Path
 
-# --- Ask where the report should go (defaults to Downloads) -----------------
-$downloads = Join-Path $env:USERPROFILE 'Downloads'
-if (-not (Test-Path -LiteralPath $downloads)) {
-    $downloads = [Environment]::GetFolderPath('Desktop')
-}
+# --- Where the report should go (defaults to the scanned folder) ------------
+# By default the report is saved right next to the files you checked. You're
+# only asked for a location if you say you want to change it.
+$defaultOut = $Path
 
 if ([string]::IsNullOrWhiteSpace($OutFolder)) {
     if ($interactive) {
         Write-Host ""
-        Write-Host "  2) The report will be saved to your Downloads folder:"
-        Write-Host "       $downloads" -ForegroundColor Gray
-        $ok = Read-Host "     Is that OK? (Y/N)"
-        if ($ok -match '^(n|no)$') {
+        Write-Host "  2) The report will be saved in the folder you checked:"
+        Write-Host "       $defaultOut" -ForegroundColor Gray
+        $change = Read-Host "     Save it somewhere else instead? (Y/N)"
+        if ($change -match '^(y|yes)$') {
             Write-Host ""
             Write-Host "     Drag the folder where you want the report into this window, then press Enter."
             $OutFolder = Read-Folder "     Save report to"
         }
     }
-    if ([string]::IsNullOrWhiteSpace($OutFolder)) { $OutFolder = $downloads }
+    if ([string]::IsNullOrWhiteSpace($OutFolder)) { $OutFolder = $defaultOut }
 }
 
 if (-not (Test-Path -LiteralPath $OutFolder -PathType Container)) {
-    Write-Warning "'$OutFolder' is not a folder - saving report to Downloads instead."
-    $OutFolder = $downloads
+    Write-Warning "'$OutFolder' is not a folder - saving report next to the checked folder instead."
+    $OutFolder = $defaultOut
 }
 $OutFolder = (Resolve-Path -LiteralPath $OutFolder).Path
 

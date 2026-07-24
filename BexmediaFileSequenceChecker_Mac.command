@@ -70,18 +70,19 @@ if [ ! -d "$SCAN_PATH" ]; then
     exit 1
 fi
 
-# --- Ask where the report should go (default: Downloads) --------------------
-DOWNLOADS="$HOME/Downloads"
-[ ! -d "$DOWNLOADS" ] && DOWNLOADS="$HOME/Desktop"
+# --- Where the report should go (default: next to the scanned folder) -------
+# By default the report is saved right next to the files you checked. You're
+# only asked for a location if you say you want to change it.
+DEFAULT_OUT="$SCAN_PATH"
 
 if [ -z "$OUT_FOLDER" ]; then
     echo ""
-    echo "  2) The report will be saved to your Downloads folder:"
-    echo "       $DOWNLOADS"
-    printf "     Is that OK? (Y/N) "
+    echo "  2) The report will be saved in the folder you checked:"
+    echo "       $DEFAULT_OUT"
+    printf "     Save it somewhere else instead? (Y/N) "
     read -r ANS
     case "$ANS" in
-        n|N|no|NO)
+        y|Y|yes|YES)
             echo ""
             echo "     Drag the folder where you want the report into this window, then press Return."
             printf "     Save report to: "
@@ -89,12 +90,12 @@ if [ -z "$OUT_FOLDER" ]; then
             OUT_FOLDER="$(strip_quotes "$OUT_FOLDER")"
             ;;
     esac
-    [ -z "$OUT_FOLDER" ] && OUT_FOLDER="$DOWNLOADS"
+    [ -z "$OUT_FOLDER" ] && OUT_FOLDER="$DEFAULT_OUT"
 fi
 
 if [ ! -d "$OUT_FOLDER" ]; then
-    echo "  '$OUT_FOLDER' is not a folder - saving report to Downloads instead."
-    OUT_FOLDER="$DOWNLOADS"
+    echo "  '$OUT_FOLDER' is not a folder - saving report next to the checked folder instead."
+    OUT_FOLDER="$DEFAULT_OUT"
 fi
 
 # --- Build the file list (every file type) ----------------------------------
